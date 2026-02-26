@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Smart Global Trading – Quotation</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --navy: #1B3A6B;
+    --navy-light: #2a508f;
+    --gold: #C9A84C;
+    --gold-light: #e8c96a;
+    --cream: #F8F5EE;
+    --cream-dark: #EDE8DC;
+    --white: #FFFFFF;
+    --text: #1a1a2e;
+    --text-muted: #6b7280;
+    --border: #d4cfc4;
+    --success: #10b981;
+    --danger: #ef4444;
+    --shadow: 0 4px 24px rgba(27,58,107,0.10);
+    --shadow-lg: 0 8px 48px rgba(27,58,107,0.18);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 0% 0%, rgba(27,58,107,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse at 100% 100%, rgba(201,168,76,0.08) 0%, transparent 60%);
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--navy);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 70px;
+    box-shadow: 0 2px 20px rgba(27,58,107,0.4);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-logo {
+    display: flex; align-items: center; gap: 14px;
+  }
+  .header-logo img {
+    height: 44px; filter: brightness(0) invert(1);
+  }
+  .header-brand {
+    color: var(--white);
+  }
+  .header-brand .company { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.02em; }
+  .header-brand .sub { font-size: 0.72rem; color: rgba(255,255,255,0.6); letter-spacing: 0.08em; text-transform: uppercase; }
+  .header-badge {
+    background: var(--gold); color: var(--navy);
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 5px 14px; border-radius: 20px;
+  }
+
+  /* ── Layout ── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+  .page-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem; font-weight: 700; color: var(--navy);
+    margin-bottom: 0.25rem;
+  }
+  .page-subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 1.75rem 2rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(212,207,196,0.5);
+    animation: fadeUp 0.4s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .card:nth-child(2) { animation-delay: 0.06s; }
+  .card:nth-child(3) { animation-delay: 0.12s; }
+  .card:nth-child(4) { animation-delay: 0.18s; }
+
+  .card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.5rem; padding-bottom: 1rem;
+    border-bottom: 1px solid var(--cream-dark);
+  }
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem; font-weight: 700; color: var(--navy);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title .icon {
+    width: 32px; height: 32px; background: var(--navy);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+  }
+
+  /* ── Form ── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.5rem; }
+  .form-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  input, select, textarea {
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text);
+    background: var(--cream);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--navy);
+    box-shadow: 0 0 0 3px rgba(27,58,107,0.1);
+    background: var(--white);
+  }
+  textarea { resize: vertical; min-height: 80px; }
+  select { cursor: pointer; }
+
+  /* ── Upload strip ── */
+  .upload-strip {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, #eef2ff, #f0f9ff);
+    border: 1.5px dashed #93afd8;
+    border-radius: 12px; margin-bottom: 1.5rem;
+    cursor: pointer; transition: border-color 0.2s, background 0.2s;
+  }
+  .upload-strip:hover { border-color: var(--navy); background: #e8eef8; }
+  .upload-strip .upload-icon { font-size: 1.8rem; }
+  .upload-strip .upload-text { flex: 1; }
+  .upload-strip .upload-text strong { display: block; font-size: 0.9rem; color: var(--navy); }
+  .upload-strip .upload-text span { font-size: 0.78rem; color: var(--text-muted); }
+  #fileInput { display: none; }
+
+  /* ── Items table ── */
+  .items-header {
+    display: grid;
+    grid-template-columns: 2fr 80px 80px 120px 100px 44px;
+    gap: 8px; padding: 8px 12px;
+    background: var(--navy); color: var(--white);
+    border-radius: 10px 10px 0 0;
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .items-header span { text-align: center; }
+  .items-header span:first-child { text-align: left; }
+  .items-header span:nth-child(4),
+  .items-header span:nth-child(5) { text-align: right; }
+
+  .items-body { border: 1.5px solid var(--border); border-top: none; border-radius: 0 0 10px 10px; overflow: hidden; }
+  .item-row {
+    display: grid;
+    grid-template-columns: 2fr 80px 80px 120px 100px 44px;
+    gap: 8px; padding: 8px 12px;
+    align-items: center;
+    border-bottom: 1px solid var(--cream-dark);
+    animation: slideIn 0.25s ease;
+    background: var(--white);
+    transition: background 0.15s;
+  }
+  .item-row:hover { background: var(--cream); }
+  .item-row:last-child { border-bottom: none; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .item-row input, .item-row select {
+    padding: 7px 10px; font-size: 0.85rem; border-radius: 8px;
+    background: var(--cream);
+  }
+  .item-row input:focus, .item-row select:focus { background: white; }
+  .item-total {
+    text-align: right; font-weight: 600; color: var(--navy);
+    font-size: 0.88rem; padding-right: 4px;
+  }
+
+  .add-item-btn {
+    width: 100%; margin-top: 10px;
+    padding: 10px; border: 1.5px dashed var(--navy-light);
+    background: transparent; border-radius: 10px;
+    color: var(--navy); font-weight: 600; font-size: 0.88rem;
+    cursor: pointer; transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .add-item-btn:hover { background: var(--navy); color: white; border-style: solid; }
+
+  /* ── Totals ── */
+  .totals-box {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+    margin-top: 1.25rem; padding-top: 1.25rem;
+    border-top: 1.5px solid var(--cream-dark);
+  }
+  .total-row { display: flex; align-items: center; gap: 2rem; font-size: 0.9rem; }
+  .total-row .label { color: var(--text-muted); min-width: 120px; text-align: right; }
+  .total-row .value { font-weight: 600; min-width: 130px; text-align: right; color: var(--text); }
+  .total-row.grand .label { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 700; color: var(--navy); }
+  .total-row.grand .value { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 700; color: var(--navy); }
+  .vat-badge {
+    background: rgba(201,168,76,0.15); color: #7d5e0a;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+    padding: 2px 8px; border-radius: 20px; text-transform: uppercase;
+  }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    background: var(--navy); color: white;
+    padding: 14px 32px; border: none; border-radius: 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 600;
+    cursor: pointer; letter-spacing: 0.02em;
+    transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px;
+    box-shadow: 0 4px 16px rgba(27,58,107,0.3);
+  }
+  .btn-primary:hover { background: var(--navy-light); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(27,58,107,0.4); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-gold {
+    background: var(--gold); color: var(--navy);
+    padding: 14px 32px; border: none; border-radius: 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 700;
+    cursor: pointer; letter-spacing: 0.02em;
+    transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px;
+    box-shadow: 0 4px 16px rgba(201,168,76,0.4);
+  }
+  .btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .btn-danger {
+    background: transparent; border: none;
+    color: #d1d5db; cursor: pointer; font-size: 1.1rem; padding: 4px 6px;
+    border-radius: 6px; transition: color 0.15s, background 0.15s;
+    line-height: 1;
+  }
+  .btn-danger:hover { color: var(--danger); background: #fef2f2; }
+  .actions { display: flex; gap: 1rem; justify-content: flex-end; flex-wrap: wrap; }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem;
+    padding: 14px 22px; border-radius: 12px; font-weight: 600; font-size: 0.9rem;
+    z-index: 999; animation: toastIn 0.3s ease;
+    box-shadow: var(--shadow-lg);
+  }
+  .toast.success { background: var(--navy); color: white; }
+  .toast.error   { background: #dc2626; color: white; }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── Loading overlay ── */
+  .loading {
+    position: fixed; inset: 0; background: rgba(27,58,107,0.5);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 200; backdrop-filter: blur(4px);
+  }
+  .loading-box {
+    background: white; border-radius: 20px; padding: 2.5rem 3rem;
+    text-align: center; box-shadow: var(--shadow-lg);
+  }
+  .spinner {
+    width: 48px; height: 48px; border: 4px solid var(--cream-dark);
+    border-top-color: var(--navy); border-radius: 50%;
+    animation: spin 0.7s linear infinite; margin: 0 auto 1rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-box p { color: var(--navy); font-weight: 600; font-size: 1rem; }
+  .hidden { display: none !important; }
+
+  /* ── Datalist autocomplete ── */
+  datalist option { font-size: 0.9rem; }
+
+  /* ── Responsive ── */
+  @media (max-width: 700px) {
+    .form-grid, .form-grid.three { grid-template-columns: 1fr; }
+    .form-group.full { grid-column: 1; }
+    .items-header { display: none; }
+    .item-row { grid-template-columns: 1fr 1fr; row-gap: 6px; }
+    .actions { flex-direction: column; }
+    .btn-primary, .btn-gold { width: 100%; justify-content: center; }
+    .card { padding: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-logo">
+    <img src="/static/smart_logo.jpg" alt="Smart logo" onerror="this.style.display='none'"/>
+    <div class="header-brand">
+      <div class="company">Smart Global Trading</div>
+      <div class="sub">Quotation Generator</div>
+    </div>
+  </div>
+  <div class="header-badge">Hotel Supplies</div>
+</header>
+
+<div class="container">
+  <h1 class="page-title">New Quotation</h1>
+  <p class="page-subtitle">Fill in the details below, add your items, and generate a professional PDF.</p>
+
+  <!-- ── Quote Meta ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><span class="icon">📋</span> Quote Details</div>
+    </div>
+    <div class="form-grid three">
+      <div class="form-group">
+        <label>Quote Number</label>
+        <input id="quoteNo" type="text" value=""/>
+      </div>
+      <div class="form-group">
+        <label>Quote Date</label>
+        <input id="quoteDate" type="text" readonly/>
+      </div>
+      <div class="form-group">
+        <label>Valid Until</label>
+        <input id="validUntil" type="text" value="30 days from date"/>
+      </div>
+      <div class="form-group">
+        <label>Currency</label>
+        <select id="currency">
+          <option>USD</option><option>EUR</option><option>GBP</option><option>KES</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Customer ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><span class="icon">🏨</span> Customer Information</div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Customer Name *</label>
+        <input id="custName" type="text" placeholder="Full name"/>
+      </div>
+      <div class="form-group">
+        <label>Company / Hotel</label>
+        <input id="custCompany" type="text" placeholder="Organisation name"/>
+      </div>
+      <div class="form-group full">
+        <label>Address</label>
+        <input id="custAddress" type="text" placeholder="City, Country"/>
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input id="custPhone" type="text" placeholder="+254 ..."/>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input id="custEmail" type="email" placeholder="email@example.com"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Items ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><span class="icon">📦</span> Line Items</div>
+      <label class="upload-strip" style="cursor:pointer; margin:0; padding:8px 14px; border-radius:8px; font-size:0.8rem; display:flex; gap:8px; align-items:center;">
+        <span>📂</span>
+        <span id="uploadLabel">Upload CSV / XLSX Price List</span>
+        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls"/>
+      </label>
+    </div>
+
+    <datalist id="itemList"></datalist>
+
+    <div class="items-header">
+      <span>Description</span>
+      <span>Unit</span>
+      <span>Qty</span>
+      <span>Unit Price</span>
+      <span>Total</span>
+      <span></span>
+    </div>
+    <div class="items-body" id="itemsBody"></div>
+    <button class="add-item-btn" onclick="addRow()">＋ Add Item</button>
+
+    <div class="totals-box">
+      <div class="total-row">
+        <span class="label">Sub Total</span>
+        <span class="value" id="subtotal">0.00</span>
+      </div>
+      <div class="total-row">
+        <span class="label">VAT <span class="vat-badge">16%</span></span>
+        <span class="value" id="vatAmt">0.00</span>
+      </div>
+      <div class="total-row grand">
+        <span class="label">Grand Total</span>
+        <span class="value" id="grandTotal">0.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Notes ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><span class="icon">📝</span> Notes & Terms</div>
+    </div>
+    <textarea id="notes">Payment: 50% advance, 50% before delivery.
+Delivery: 2–4 weeks after order confirmation.
+All prices are exclusive of delivery charges.</textarea>
+  </div>
+
+  <!-- ── Actions ── -->
+  <div class="actions">
+    <button class="btn-primary" onclick="clearAll()">🗑 Clear All</button>
+    <button class="btn-gold" onclick="generatePDF()">⬇ Generate PDF Quotation</button>
+  </div>
+</div>
+
+<!-- Loading -->
+<div class="loading hidden" id="loading">
+  <div class="loading-box">
+    <div class="spinner"></div>
+    <p>Generating your PDF…</p>
+  </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+let allItems = [];
+let rowCount = 0;
+
+// ── Init ───────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const now = new Date();
+  document.getElementById('quoteDate').value =
+    now.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('quoteNo').value =
+    `SG-${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}-001`;
+
+  fetchItems();
+  addRow();
+});
+
+// ── Items from server ──────────────────────────────────────────────────────
+async function fetchItems() {
+  try {
+    const r = await fetch('/api/items');
+    allItems = await r.json();
+    populateDatalist();
+  } catch(e) { console.error(e); }
+}
+
+function populateDatalist() {
+  const dl = document.getElementById('itemList');
+  dl.innerHTML = allItems.map(i => `<option value="${i.name}">`).join('');
+}
+
+// ── File upload ────────────────────────────────────────────────────────────
+document.getElementById('fileInput').addEventListener('change', async function() {
+  if (!this.files[0]) return;
+  const fd = new FormData();
+  fd.append('file', this.files[0]);
+  try {
+    const r = await fetch('/api/upload-items', { method:'POST', body: fd });
+    const d = await r.json();
+    if (d.error) { toast(d.error, 'error'); return; }
+    allItems = d.items;
+    populateDatalist();
+    document.getElementById('uploadLabel').textContent = `✓ ${d.count} items loaded`;
+    toast(`${d.count} items loaded successfully!`);
+  } catch(e) { toast('Upload failed', 'error'); }
+});
+
+// ── Rows ───────────────────────────────────────────────────────────────────
+function addRow(name='', unit='Piece', qty=1, price='') {
+  rowCount++;
+  const id = rowCount;
+  const body = document.getElementById('itemsBody');
+  const row = document.createElement('div');
+  row.className = 'item-row';
+  row.id = `row-${id}`;
+  row.innerHTML = `
+    <div>
+      <input type="text" list="itemList" placeholder="Type or select item…"
+             id="name-${id}" value="${name}" oninput="onNameChange(${id})" onchange="onNameChange(${id})"/>
+    </div>
+    <input type="text" id="unit-${id}" value="${unit}" placeholder="Unit" style="text-align:center"/>
+    <input type="number" id="qty-${id}" value="${qty}" min="0.01" step="any"
+           oninput="calcRow(${id})" style="text-align:center"/>
+    <input type="number" id="price-${id}" value="${price}" min="0" step="any" placeholder="0.00"
+           oninput="calcRow(${id})" style="text-align:right"/>
+    <div class="item-total" id="total-${id}">0.00</div>
+    <button class="btn-danger" onclick="removeRow(${id})" title="Remove">✕</button>
+  `;
+  body.appendChild(row);
+  calcRow(id);
+}
+
+function removeRow(id) {
+  document.getElementById(`row-${id}`)?.remove();
+  calcTotals();
+}
+
+function onNameChange(id) {
+  const name = document.getElementById(`name-${id}`).value.trim();
+  const item = allItems.find(i => i.name === name);
+  if (item) {
+    document.getElementById(`price-${id}`).value = item.price.toFixed(2);
+    document.getElementById(`unit-${id}`).value  = item.unit || 'Piece';
+  }
+  calcRow(id);
+}
+
+function calcRow(id) {
+  const qty   = parseFloat(document.getElementById(`qty-${id}`)?.value) || 0;
+  const price = parseFloat(document.getElementById(`price-${id}`)?.value) || 0;
+  const total = qty * price;
+  const el = document.getElementById(`total-${id}`);
+  if (el) el.textContent = fmt(total);
+  calcTotals();
+}
+
+function calcTotals() {
+  const cur = document.getElementById('currency').value;
+  let subtotal = 0;
+  document.querySelectorAll('.item-row').forEach(row => {
+    const id = row.id.replace('row-','');
+    const qty   = parseFloat(document.getElementById(`qty-${id}`)?.value) || 0;
+    const price = parseFloat(document.getElementById(`price-${id}`)?.value) || 0;
+    subtotal += qty * price;
+  });
+  const vat   = subtotal * 0.16;
+  const grand = subtotal + vat;
+  document.getElementById('subtotal').textContent  = `${fmt(subtotal)} ${cur}`;
+  document.getElementById('vatAmt').textContent    = `${fmt(vat)} ${cur}`;
+  document.getElementById('grandTotal').textContent = `${fmt(grand)} ${cur}`;
+}
+
+document.getElementById('currency').addEventListener('change', calcTotals);
+function fmt(n) { return n.toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
+
+// ── PDF Generation ─────────────────────────────────────────────────────────
+async function generatePDF() {
+  const custName = document.getElementById('custName').value.trim();
+  if (!custName) { toast('Please enter the Customer Name', 'error'); return; }
+
+  const items = [];
+  let valid = true;
+  document.querySelectorAll('.item-row').forEach(row => {
+    const id    = row.id.replace('row-','');
+    const name  = document.getElementById(`name-${id}`)?.value.trim();
+    const unit  = document.getElementById(`unit-${id}`)?.value.trim() || 'Piece';
+    const qty   = parseFloat(document.getElementById(`qty-${id}`)?.value) || 0;
+    const price = parseFloat(document.getElementById(`price-${id}`)?.value) || 0;
+    if (name && qty > 0) items.push({ name, unit, qty, price });
+  });
+
+  if (!items.length) { toast('Please add at least one item with quantity', 'error'); return; }
+
+  const payload = {
+    quote_no:      document.getElementById('quoteNo').value,
+    date:          document.getElementById('quoteDate').value,
+    valid_until:   document.getElementById('validUntil').value,
+    currency:      document.getElementById('currency').value,
+    customer_name: custName,
+    company:       document.getElementById('custCompany').value,
+    address:       document.getElementById('custAddress').value,
+    phone:         document.getElementById('custPhone').value,
+    email:         document.getElementById('custEmail').value,
+    items,
+    notes:         document.getElementById('notes').value,
+  };
+
+  document.getElementById('loading').classList.remove('hidden');
+  try {
+    const r = await fetch('/api/generate-pdf', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!r.ok) { const e = await r.json(); toast(e.error || 'PDF failed', 'error'); return; }
+    const blob = await r.blob();
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = `Quotation_${payload.quote_no}.pdf`;
+    a.click(); URL.revokeObjectURL(url);
+    toast('PDF downloaded successfully! ✓');
+  } catch(e) {
+    toast('Network error — try again', 'error');
+  } finally {
+    document.getElementById('loading').classList.add('hidden');
+  }
+}
+
+// ── Utilities ──────────────────────────────────────────────────────────────
+function clearAll() {
+  if (!confirm('Clear all data?')) return;
+  document.getElementById('itemsBody').innerHTML = '';
+  ['custName','custCompany','custAddress','custPhone','custEmail'].forEach(id =>
+    document.getElementById(id).value = '');
+  rowCount = 0;
+  addRow();
+  calcTotals();
+}
+
+function toast(msg, type='success') {
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+</script>
+</body>
+</html>
